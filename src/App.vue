@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import HelloWorld from './components/HelloWorld.vue'
-</script>
-
 <template>
   <div>
     <a href="https://www.electronjs.org/" target="_blank">
@@ -20,6 +16,10 @@ import HelloWorld from './components/HelloWorld.vue'
     <img style="width: 2.4em; margin-left: .4em;" src="/logo.svg" alt="Logo">
   </div>
 </template>
+
+<script setup lang="ts">
+import HelloWorld from './components/HelloWorld.vue'
+</script>
 
 <style>
 .flex-center {
