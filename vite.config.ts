@@ -1,6 +1,7 @@
 import fs from 'node:fs'
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
+import UnoCSS from 'unocss/vite'
 import electron from 'vite-plugin-electron/simple'
 import pkg from './package.json'
 
@@ -15,6 +16,7 @@ export default defineConfig(({ command }) => {
   return {
     plugins: [
       vue(),
+      UnoCSS(),
       electron({
         main: {
           // Shortcut of `build.lib.entry`
@@ -22,7 +24,8 @@ export default defineConfig(({ command }) => {
           onstart({ startup }) {
             if (process.env.VSCODE_DEBUG) {
               console.log(/* For `.vscode/.debug.script.mjs` */'[startup] Electron App')
-            } else {
+            }
+            else {
               startup()
             }
           },
@@ -32,7 +35,7 @@ export default defineConfig(({ command }) => {
               minify: isBuild,
               outDir: 'dist-electron/main',
               rollupOptions: {
-                // Some third-party Node.js libraries may not be built correctly by Vite, especially `C/C++` addons, 
+                // Some third-party Node.js libraries may not be built correctly by Vite, especially `C/C++` addons,
                 // we can use `external` to exclude them to ensure they work correctly.
                 // Others need to put them in `dependencies` to ensure they are collected into `app.asar` after the app is built.
                 // Of course, this is not absolute, just this way is relatively simple. :)
