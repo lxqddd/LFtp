@@ -38,6 +38,7 @@ async function createWindow() {
     title: 'Main window',
     icon: path.join(process.env.VITE_PUBLIC, 'favicon.ico'),
     frame: false,
+    trafficLightPosition: { x: 20, y: 20 },
     titleBarStyle: 'hidden',
     titleBarOverlay: {
       symbolColor: '#fff',
