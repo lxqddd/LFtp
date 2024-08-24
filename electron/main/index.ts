@@ -3,7 +3,6 @@ import { fileURLToPath } from 'node:url'
 import path from 'node:path'
 import os from 'node:os'
 import { BrowserWindow, app, ipcMain, shell } from 'electron'
-
 // const require = createRequire(import.meta.url)
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -38,8 +37,16 @@ async function createWindow() {
   win = new BrowserWindow({
     title: 'Main window',
     icon: path.join(process.env.VITE_PUBLIC, 'favicon.ico'),
+    frame: false,
+    titleBarStyle: 'hidden',
+    titleBarOverlay: {
+      symbolColor: '#fff',
+      color: '#333',
+      height: 32,
+    },
     webPreferences: {
       preload,
+      webSecurity: false,
       // Warning: Enable nodeIntegration and disable contextIsolation is not secure in production
       // nodeIntegration: true,
 
@@ -72,7 +79,9 @@ async function createWindow() {
   // win.webContents.on('will-navigate', (event, url) => { }) #344
 }
 
-app.whenReady().then(createWindow)
+app.whenReady().then(async () => {
+  createWindow()
+})
 
 app.on('window-all-closed', () => {
   win = null
@@ -89,8 +98,9 @@ app.on('second-instance', () => {
   }
 })
 
-app.on('activate', () => {
+app.on('activate', async () => {
   const allWindows = BrowserWindow.getAllWindows()
+
   if (allWindows.length) {
     allWindows[0].focus()
   }
