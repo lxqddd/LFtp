@@ -1,11 +1,11 @@
 {
   "name": "LFtp",
-  "version": "28.1.0",
-  "main": "dist-electron/main/index.js",
-  "description": "Really simple Electron + Vue + Vite boilerplate.",
+  "type": "module",
+  "version": "0.0.1",
+  "private": true,
+  "description": "a ftp client",
   "author": "向阳",
   "license": "MIT",
-  "private": true,
   "keywords": [
     "electron",
     "rollup",
@@ -13,25 +13,32 @@
     "vue3",
     "vue"
   ],
+  "main": "dist-electron/main/index.js",
   "debug": {
     "env": {
       "VITE_DEV_SERVER_URL": "http://127.0.0.1:3344/"
     }
   },
-  "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc --noEmit && vite build && electron-builder",
     "preview": "vite preview",
     "lint:fix": "eslint --fix ."
   },
+  "dependencies": {
+    "fs-extra": "^11.2.0",
+    "node-ssh": "^13.2.0"
+  },
   "devDependencies": {
     "@antfu/eslint-config": "^2.27.0",
+    "@types/fs-extra": "^11.0.4",
+    "@types/ssh2": "^1.15.1",
     "@unocss/eslint-plugin": "^0.62.2",
     "@vitejs/plugin-vue": "^5.0.4",
     "electron": "^29.1.1",
     "electron-builder": "^24.13.3",
     "eslint": "^9.9.0",
+    "ssh2": "^1.15.0",
     "typescript": "^5.4.2",
     "unocss": "^0.62.2",
     "vite": "^5.1.5",
@@ -39,8 +46,5 @@
     "vite-plugin-electron-renderer": "^0.14.5",
     "vue": "^3.4.21",
     "vue-tsc": "^2.0.6"
-  },
-  "dependencies": {
-    "node-ssh": "^13.2.0"
   }
 }
