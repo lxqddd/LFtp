@@ -5,6 +5,9 @@ import { darkTheme, dateZhCN, zhCN } from 'naive-ui'
 <template>
   <NConfigProvider :locale="zhCN" :date-locale="dateZhCN" :theme="darkTheme">
     <span class="mdi:apple" />
+    <div class="text-red">
+      asdfds
+    </div>
     <NButton type="primary">
       this is btn
     </NButton>
