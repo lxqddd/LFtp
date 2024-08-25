@@ -27,7 +27,9 @@
   },
   "dependencies": {
     "fs-extra": "^11.2.0",
-    "node-ssh": "^13.2.0"
+    "node-ssh": "^13.2.0",
+    "normalize.css": "^8.0.1",
+    "sass": "^1.77.8"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^2.27.0",

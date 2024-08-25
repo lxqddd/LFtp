@@ -1,8 +1,8 @@
 import { createApp } from 'vue'
 import 'virtual:uno.css'
+import 'normalize.css'
+import './styles/index.scss'
 import App from './App.vue'
-
-import './style.css'
 
 createApp(App)
   .mount('#app')

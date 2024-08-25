@@ -37,14 +37,14 @@ async function createWindow() {
   win = new BrowserWindow({
     title: 'Main window',
     icon: path.join(process.env.VITE_PUBLIC, 'favicon.ico'),
-    frame: false,
-    trafficLightPosition: { x: 20, y: 20 },
-    titleBarStyle: 'hidden',
-    titleBarOverlay: {
-      symbolColor: '#fff',
-      color: '#333',
-      height: 32,
-    },
+    // frame: false,
+    // trafficLightPosition: { x: 20, y: 20 },
+    // titleBarStyle: 'hidden',
+    // titleBarOverlay: {
+    //   symbolColor: '#fff',
+    //   color: '#333',
+    //   height: 32,
+    // },
     webPreferences: {
       preload,
       webSecurity: false,
