@@ -1,6 +1,8 @@
 <script lang="ts" setup>
-import { nextTick, ref, useTemplateRef } from 'vue'
+import { nextTick, onMounted, ref, useTemplateRef } from 'vue'
 import type { FormInstance, FormRules } from 'element-plus'
+import type Node from 'element-plus/es/components/tree/src/model/node'
+import type { IDirs, SourceType } from '../../types/index'
 
 const menuOptions = [
   {
@@ -23,6 +25,52 @@ const sshFormRules = ref<FormRules<typeof sshForm>>({
   password: [{ required: true, message: '请输入密码', trigger: 'blur' }],
 })
 
+const localHomeDir = ref<IDirs[]>([])
+const treeProps = {
+  isLeaf: 'leaf',
+}
+const treeIconsMap: { [key in SourceType]: {
+  name: string
+  color: string
+} } = {
+  directory: {
+    name: 'mdi:folder',
+    color: '#7dcdfa',
+  },
+  file: {
+    name: 'mdi:file',
+    color: '',
+  },
+  image: {
+    name: 'mdi:file-image',
+    color: '',
+  },
+  pdf: {
+    name: 'mdi:file-pdf',
+    color: '',
+  },
+  excel: {
+    name: 'mdi:file-excel',
+    color: '',
+  },
+  word: {
+    name: 'mdi:file-word',
+    color: '',
+  },
+  ppt: {
+    name: 'mdi:file-powerpoint',
+    color: '',
+  },
+  markdown: {
+    name: 'mdi:markdown',
+    color: '',
+  },
+}
+
+onMounted(async () => {
+  localHomeDir.value = await window.ipcRenderer.invoke('get:localHomeDir')
+})
+
 async function showCreateConnectDialog() {
   createConnectionVisible.value = true
   await nextTick()
@@ -36,6 +84,20 @@ function handleCancelCreateConnect() {
 
 function handleCreateConnect() {
   createConnectionVisible.value = false
+}
+
+async function lazyLoadNode(node: Node, resolve: (data: IDirs[]) => void) {
+  console.log('lazy load', node)
+  if (node.data.type !== 'directory') {
+    return resolve([])
+  }
+  const path = node.data.path
+  if (!path) {
+    return
+  }
+  const res = await window.ipcRenderer.invoke('get:localDirs', path)
+  console.log(res)
+  resolve(res)
 }
 
 async function handleSelect(key: string) {
@@ -65,7 +127,16 @@ async function handleSelect(key: string) {
         </div>
       </div>
       <div class="local h-100% flex-1 b-r-1px b-r-#000 b-r-solid">
-        this is local
+        <el-tree :data="localHomeDir" node-key="path" :expand-on-click-node="true" :load="lazyLoadNode" :props="treeProps"
+          lazy>
+          <template #default="{ data }">
+            <div class="flex items-center">
+              <span class="mr-1"
+                :class="[treeIconsMap[data.type as SourceType].name, `text-${treeIconsMap[data.type as SourceType].color}`]" />
+              <span>{{ data.name }}</span>
+            </div>
+          </template>
+        </el-tree>
       </div>
       <div class="remote flex-1 b-r-1px b-r-#000 b-r-solid">
         this is remote

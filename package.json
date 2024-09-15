@@ -27,7 +27,9 @@
   },
   "dependencies": {
     "element-plus": "^2.8.3",
+    "execa": "^9.3.1",
     "fs-extra": "^11.2.0",
+    "mime": "^4.0.4",
     "node-ssh": "^13.2.0",
     "normalize.css": "^8.0.1",
     "sass": "^1.77.8"

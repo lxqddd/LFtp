@@ -3,6 +3,7 @@ import { fileURLToPath } from 'node:url'
 import path from 'node:path'
 import os from 'node:os'
 import { BrowserWindow, app, ipcMain, shell } from 'electron'
+import { handleGetLocalDirs, handleGetLocalHomeDir } from './src/local'
 // const require = createRequire(import.meta.url)
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -80,8 +81,10 @@ async function createWindow() {
   // win.webContents.on('will-navigate', (event, url) => { }) #344
 }
 
-app.whenReady().then(async () => {
+app.whenReady().then(() => {
   createWindow()
+  handleGetLocalHomeDir()
+  handleGetLocalDirs()
 })
 
 app.on('window-all-closed', () => {
