@@ -7,7 +7,7 @@
     "module": "ESNext",
     "moduleResolution": "Node",
     "resolveJsonModule": true,
-    "types": ["naive-ui/volar"],
+    "types": ["element-plus/global"],
     "strict": true,
     "noEmit": true,
     "esModuleInterop": true,

@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { darkTheme, dateZhCN, zhCN } from 'naive-ui'
+import zhCn from 'element-plus/es/locale/lang/zh-cn'
+import dateZhCN from 'dayjs/locale/zh-cn'
 import Home from './views/Home.vue'
 </script>
 
 <template>
-  <NConfigProvider :locale="zhCN" :date-locale="dateZhCN" :theme="darkTheme">
+  <el-config-provider :locale="zhCn" :date-locale="dateZhCN">
     <Home />
-  </NConfigProvider>
+  </el-config-provider>
 </template>
