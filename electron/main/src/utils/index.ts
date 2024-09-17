@@ -23,6 +23,9 @@ export function getFileType(filePath: string) {
     case 'text/markdown':
       type = 'markdown'
       break
+    case 'application/zip':
+      type = 'zip'
+      break
     case 'image/jpeg':
     case 'image/png':
     case 'image/gif':
@@ -30,7 +33,8 @@ export function getFileType(filePath: string) {
       type = 'image'
       break
     default:
-      type = 'file'
+      const dotIndex = filePath.lastIndexOf('.')
+      type = dotIndex === -1 ? '' : filePath.slice(dotIndex + 1)
   }
   return type
 }
@@ -47,4 +51,15 @@ export function sortDirs(dirs: IDirs[]) {
       return 0
     }
   })
+}
+
+/**
+ *
+ * @param fileInfo link this "drwxr-xr-x 2 root root 4096 1月  27 2021 Download"
+ */
+export function getRemoteFileTypeAndName(fileInfo: string) {
+  const fileInfoArr = fileInfo.split(' ')
+  const type = fileInfoArr[0][0] === 'd' ? 'directory' : 'file'
+  const name = fileInfoArr[fileInfoArr.length - 1]
+  return { type, name }
 }

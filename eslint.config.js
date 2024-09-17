@@ -7,5 +7,6 @@ export default antfu({
     'node/prefer-global/process': 'off',
     'no-console': 'off',
     'ts/no-unused-expressions': 'off',
+    'no-case-declarations': 'off',
   },
 })

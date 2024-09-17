@@ -1,8 +1,9 @@
 <script lang="ts" setup>
 import { nextTick, onMounted, ref, useTemplateRef } from 'vue'
-import type { FormInstance, FormRules } from 'element-plus'
+import { ElMessage, type FormInstance, type FormRules } from 'element-plus'
 import type Node from 'element-plus/es/components/tree/src/model/node'
-import type { IDirs, SourceType } from '../../types/index'
+import type { IDirs, ISshForm, SourceType } from '../../types/index'
+import { treeIconsMap } from '../utils/tree'
 
 const menuOptions = [
   {
@@ -13,7 +14,8 @@ const menuOptions = [
 ]
 const sshFormRef = useTemplateRef<FormInstance>('sshFormRef')
 const createConnectionVisible = ref(false)
-const sshForm = ref({
+const sshForm = ref<ISshForm>({
+  linkName: '',
   username: '',
   host: '',
   password: '',
@@ -26,46 +28,7 @@ const sshFormRules = ref<FormRules<typeof sshForm>>({
 })
 
 const localHomeDir = ref<IDirs[]>([])
-const treeProps = {
-  isLeaf: 'leaf',
-}
-const treeIconsMap: { [key in SourceType]: {
-  name: string
-  color: string
-} } = {
-  directory: {
-    name: 'mdi:folder',
-    color: '#7dcdfa',
-  },
-  file: {
-    name: 'mdi:file',
-    color: '',
-  },
-  image: {
-    name: 'mdi:file-image',
-    color: '',
-  },
-  pdf: {
-    name: 'mdi:file-pdf',
-    color: '',
-  },
-  excel: {
-    name: 'mdi:file-excel',
-    color: '',
-  },
-  word: {
-    name: 'mdi:file-word',
-    color: '',
-  },
-  ppt: {
-    name: 'mdi:file-powerpoint',
-    color: '',
-  },
-  markdown: {
-    name: 'mdi:markdown',
-    color: '',
-  },
-}
+const links = ref<ISshForm[]>([])
 
 onMounted(async () => {
   localHomeDir.value = await window.ipcRenderer.invoke('get:localHomeDir')
@@ -84,6 +47,7 @@ function handleCancelCreateConnect() {
 
 function handleCreateConnect() {
   createConnectionVisible.value = false
+  links.value.push(sshForm.value)
 }
 
 async function lazyLoadNode(node: Node, resolve: (data: IDirs[]) => void) {
@@ -95,9 +59,16 @@ async function lazyLoadNode(node: Node, resolve: (data: IDirs[]) => void) {
   if (!path) {
     return
   }
-  const res = await window.ipcRenderer.invoke('get:localDirs', path)
-  console.log(res)
-  resolve(res)
+  try {
+    const res = await window.ipcRenderer.invoke('get:localDirs', path)
+    console.log(res)
+    resolve(res)
+  }
+  catch (e) {
+    console.error(e)
+    ElMessage.error('Operation not permitted')
+    resolve([])
+  }
 }
 
 async function handleSelect(key: string) {
@@ -112,7 +83,7 @@ async function handleSelect(key: string) {
 <template>
   <div class="h-100vh flex flex-col">
     <div class="flex flex-1">
-      <div class="menu w-50 b-r-1px b-r-#000 b-r-solid pl-2 pt-4">
+      <div class="links w-50 b-r-1px b-r-#000 b-r-solid pl-2 pt-4">
         <div class="pr-2 text-align-end">
           <el-dropdown>
             <span class="mdi:menu cursor-pointer text-6" />
@@ -125,14 +96,21 @@ async function handleSelect(key: string) {
             </template>
           </el-dropdown>
         </div>
+        <div>
+          <div v-for="link in links" :key="link.host"
+            class="flex cursor-pointer items-center justify-between pb-1 pl-3 pr-3 pt-1 text-3">
+            <div>{{ link.linkName ? link.linkName : link.host }}</div>
+            <span class="ep:more-filled text-4 hover:text-[var(--el-color-primary)]" />
+          </div>
+        </div>
       </div>
       <div class="local h-100% flex-1 b-r-1px b-r-#000 b-r-solid">
-        <el-tree :data="localHomeDir" node-key="path" :expand-on-click-node="true" :load="lazyLoadNode" :props="treeProps"
-          lazy>
+        <el-tree :data="localHomeDir" node-key="path" :expand-on-click-node="true" :load="lazyLoadNode" :props="{
+          isLeaf: 'leaf',
+        }" lazy>
           <template #default="{ data }">
             <div class="flex items-center">
-              <span class="mr-1"
-                :class="[treeIconsMap[data.type as SourceType].name, `text-${treeIconsMap[data.type as SourceType].color}`]" />
+              <span class="mr-1" :class="[treeIconsMap[data.type as SourceType] || 'mdi:file']" />
               <span>{{ data.name }}</span>
             </div>
           </template>
@@ -148,6 +126,9 @@ async function handleSelect(key: string) {
   </div>
   <el-dialog v-model="createConnectionVisible" title="创建链接" width="500px">
     <el-form ref="sshFormRef" :model="sshForm" label-width="100px" :rules="sshFormRules">
+      <el-form-item prop="linkName" label="链接名称:">
+        <el-input v-model="sshForm.linkName" placeholder="请输入链接名称" />
+      </el-form-item>
       <el-form-item prop="username" label="username:">
         <el-input v-model="sshForm.username" placeholder="请输入用户名称" />
       </el-form-item>
@@ -155,7 +136,7 @@ async function handleSelect(key: string) {
         <el-input v-model="sshForm.host" placeholder="请输入主机地址" />
       </el-form-item>
       <el-form-item prop="password" label="password: ">
-        <el-input v-model="sshForm.password" placeholder="请输入密码" />
+        <el-input v-model="sshForm.password" type="password" placeholder="请输入密码" show-password />
       </el-form-item>
     </el-form>
     <template #footer>

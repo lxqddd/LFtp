@@ -10,6 +10,7 @@ export default defineConfig({
       },
       collections: {
         mdi: () => import('@iconify-json/mdi/icons.json').then(i => i.default),
+        ep: () => import('@iconify-json/ep/icons.json').then(i => i.default),
       },
     }),
   ],
